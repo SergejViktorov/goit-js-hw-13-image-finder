@@ -32,12 +32,12 @@ function fetchArticles() {
   });
 }
 
-function appenArticlesMarkup(hits) {
-  refs.articlesContainer.insertAdjacentHTML('beforeend', articlesTpl(hits));
-}
-
 function clearArticlesContainer() {
   refs.articlesContainer.innerHTML = '';
+}
+
+function appenArticlesMarkup(hits) {
+  refs.articlesContainer.insertAdjacentHTML('beforeend', articlesTpl(hits));
 }
 
 const onEntry = entries => {
