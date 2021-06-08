@@ -1,6 +1,9 @@
 import articlesTpl from './templates/articles.hbs';
 import './sass/main.scss';
 import NewsApiService from './js/apiService';
+import '@pnotify/core/dist/BrightTheme.css';
+import '@pnotify/core/dist/PNotify.css';
+import { defaults, error } from '@pnotify/core';
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -17,7 +20,12 @@ function onSearch(e) {
   newsApiService.query = e.currentTarget.elements.query.value;
 
   if (newsApiService.query === '') {
-    return alert('введи что-то нормальное');
+    const myError = error({
+      text: 'Please enter a more specific query!',
+      type: 'Error',
+      delay: 4000,
+    });
+    return;
   }
 
   newsApiService.resetPage();
