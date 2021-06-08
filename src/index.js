@@ -16,14 +16,13 @@ function onSearch(e) {
   e.preventDefault();
   newsApiService.query = e.currentTarget.elements.query.value;
 
-  if ((newsApiService.query = '')) {
+  if (newsApiService.query === '') {
     return alert('введи что-то нормальное');
   }
 
   newsApiService.resetPage();
   clearArticlesContainer();
   fetchArticles();
-  registerIntersectionObserver();
 }
 
 function fetchArticles() {
@@ -41,20 +40,18 @@ function clearArticlesContainer() {
   refs.articlesContainer.innerHTML = '';
 }
 
-function registerIntersectionObserver() {
-  const onEntry = entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        console.log('пора грузить еще картинки');
-        fetchArticles();
-      }
-    });
-  };
+const onEntry = entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && newsApiService.query !== '') {
+      console.log('пора грузить еще картинки');
+      fetchArticles();
+    }
+  });
+};
 
-  const options = {
-    rootMargin: '620px',
-  };
-  const observer = new IntersectionObserver(onEntry, options);
+const options = {
+  rootMargin: '620px',
+};
+const observer = new IntersectionObserver(onEntry, options);
 
-  observer.observe(refs.sentinel);
-}
+observer.observe(refs.sentinel);
