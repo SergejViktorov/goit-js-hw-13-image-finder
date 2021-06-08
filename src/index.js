@@ -1,6 +1,60 @@
+import articlesTpl from './templates/articles.hbs';
 import './sass/main.scss';
-const KEY = '21922631-b9054864096d193e79c9fc0a3';
+import NewsApiService from './js/apiService';
 
-fetch(
-  `https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=что_искать&page=номер_страницы&per_page=12&key=${KEY}`,
-);
+const refs = {
+  searchForm: document.querySelector('#search-form'),
+  articlesContainer: document.querySelector('.gallery'),
+  sentinel: document.querySelector('#sentinel'),
+};
+
+const newsApiService = new NewsApiService();
+
+refs.searchForm.addEventListener('submit', onSearch);
+
+function onSearch(e) {
+  e.preventDefault();
+  newsApiService.query = e.currentTarget.elements.query.value;
+
+  if ((newsApiService.query = '')) {
+    return alert('введи что-то нормальное');
+  }
+
+  newsApiService.resetPage();
+  clearArticlesContainer();
+  fetchArticles();
+  registerIntersectionObserver();
+}
+
+function fetchArticles() {
+  newsApiService.fetchArticles().then(hits => {
+    appenArticlesMarkup(hits);
+    newsApiService.incremenntPage();
+  });
+}
+
+function appenArticlesMarkup(hits) {
+  refs.articlesContainer.insertAdjacentHTML('beforeend', articlesTpl(hits));
+}
+
+function clearArticlesContainer() {
+  refs.articlesContainer.innerHTML = '';
+}
+
+function registerIntersectionObserver() {
+  const onEntry = entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        console.log('пора грузить еще картинки');
+        fetchArticles();
+      }
+    });
+  };
+
+  const options = {
+    rootMargin: '620px',
+  };
+  const observer = new IntersectionObserver(onEntry, options);
+
+  observer.observe(refs.sentinel);
+}
