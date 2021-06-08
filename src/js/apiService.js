@@ -1,6 +1,6 @@
 const API_KEY = '21922631-b9054864096d193e79c9fc0a3';
 
-export default class NewsApiService {
+export default class ImgsApiService {
   constructor() {
     this.searchQuery = '';
     this.page = 1;

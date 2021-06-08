@@ -1,6 +1,7 @@
 import articlesTpl from './templates/articles.hbs';
 import './sass/main.scss';
-import NewsApiService from './js/apiService';
+import ImgsApiService from './js/apiService';
+
 import '@pnotify/core/dist/BrightTheme.css';
 import '@pnotify/core/dist/PNotify.css';
 import { defaults, error } from '@pnotify/core';
@@ -11,15 +12,15 @@ const refs = {
   sentinel: document.querySelector('#sentinel'),
 };
 
-const newsApiService = new NewsApiService();
+const imgsApiService = new ImgsApiService();
 
 refs.searchForm.addEventListener('submit', onSearch);
 
 function onSearch(e) {
   e.preventDefault();
-  newsApiService.query = e.currentTarget.elements.query.value;
+  imgsApiService.query = e.currentTarget.elements.query.value;
 
-  if (newsApiService.query === '') {
+  if (imgsApiService.query === '') {
     const myError = error({
       text: 'Please enter a more specific query!',
       type: 'Error',
@@ -28,15 +29,15 @@ function onSearch(e) {
     return;
   }
 
-  newsApiService.resetPage();
+  imgsApiService.resetPage();
   clearArticlesContainer();
   fetchArticles();
 }
 
 function fetchArticles() {
-  newsApiService.fetchArticles().then(hits => {
+  imgsApiService.fetchArticles().then(hits => {
     appenArticlesMarkup(hits);
-    newsApiService.incremenntPage();
+    imgsApiService.incremenntPage();
   });
 }
 
@@ -50,8 +51,7 @@ function appenArticlesMarkup(hits) {
 
 const onEntry = entries => {
   entries.forEach(entry => {
-    if (entry.isIntersecting && newsApiService.query !== '') {
-      console.log('пора грузить еще картинки');
+    if (entry.isIntersecting && imgsApiService.query !== '') {
       fetchArticles();
     }
   });
